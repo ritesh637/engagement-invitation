@@ -1,5 +1,5 @@
 // pages/Index.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import EnvelopeOpening from "@/components/EnvelopeOpening";
 import HeroSection from "@/components/HeroSection";
@@ -14,6 +14,24 @@ import FloatingPetals from "@/components/FloatingPetals";
 const Index = () => {
   const [isInvitationOpen, setIsInvitationOpen] = useState(false);
   const [showContent, setShowContent] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Auto-play audio on first user interaction
+  useEffect(() => {
+    const handleInteraction = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().catch(() => {});
+      }
+    };
+
+    document.addEventListener("click", handleInteraction);
+    document.addEventListener("touchstart", handleInteraction);
+
+    return () => {
+      document.removeEventListener("click", handleInteraction);
+      document.removeEventListener("touchstart", handleInteraction);
+    };
+  }, []);
 
   useEffect(() => {
     if (isInvitationOpen) {
@@ -24,6 +42,8 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-cream overflow-x-hidden">
+      <audio ref={audioRef} src="/shehnai.mp3" preload="auto" loop />
+      
       <AnimatePresence mode="wait">
         {!isInvitationOpen ? (
           <EnvelopeOpening 

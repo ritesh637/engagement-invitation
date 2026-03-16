@@ -1,7 +1,6 @@
 // EnvelopeOpening.tsx
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect, useRef } from "react";
-
+import { useState } from "react";
 interface EnvelopeOpeningProps {
   onOpen: () => void;
 }
@@ -9,32 +8,17 @@ interface EnvelopeOpeningProps {
 const EnvelopeOpening = ({ onOpen }: EnvelopeOpeningProps) => {
   const [isOpening, setIsOpening] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const startOpening = () => {
     if (isOpening) return;
     
     setIsOpening(true);
 
-    // Play shehnai
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {});
-    }
-
     setTimeout(() => {
       setIsOpen(true);
       onOpen();
     }, 1400);
   };
-
-  // Auto-open after delay (optional - remove if you want only tap to open)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      startOpening();
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div
@@ -55,9 +39,6 @@ const EnvelopeOpening = ({ onOpen }: EnvelopeOpeningProps) => {
           />
         ))}
       </div>
-
-      {/* Audio element */}
-      <audio ref={audioRef} src="/shehnai.mp3" preload="auto" />
 
       <AnimatePresence mode="wait">
         {!isOpen && (
